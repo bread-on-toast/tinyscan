@@ -1,9 +1,22 @@
 #!bash
 rm test.obj
+rm caldata
+touch test.obj
+#erzeuge erst svg's
+#for f in img/*.png; do
+#convert -sigmoidal-contrast 90x100 $f $f.svg;
+#done;
+
+#alle svg's in svg ordner
+#cp ./img/*.svg ./svg/
 i=0;
-for f in img/*.png; do
-convert -sigmoidal-contrast 90x100 $f ./laser.svg;
-./a.out $i >>test.obj;
-i=`expr $i + 1`;
+
+#calc pointcloud
+for f in svg/*.svg; do
+#cp $f ./laser.svg;
+./a.out $i $f  >>test.obj;
+i=`expr $i + 10`;
 echo $i;
 done;
+
+#rm ./laser.svg
