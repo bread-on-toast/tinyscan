@@ -3,12 +3,12 @@ rm test.obj
 rm caldata
 touch test.obj
 #erzeuge erst svg's
-#for f in img/*.png; do
-#convert -sigmoidal-contrast 90x100 $f $f.svg;
-#done;
+for f in img/*.png; do
+convert -sigmoidal-contrast 90x100 $f $f.svg;
+done;
 
 #alle svg's in svg ordner
-#cp ./img/*.svg ./svg/
+cp ./img/*.svg ./svg/
 i=0;
 
 #calc pointcloud
