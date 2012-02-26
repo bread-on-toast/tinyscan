@@ -2,31 +2,30 @@
 #define SCAN_H
 class scan
 {
-private: //all the Values 
+private: 
 	std::string points;
 	int lines;
-	int cx;
+	int cx; //calibration-factors
 	int cy;
-	int ww;
+	int ww; //coordinates for zero
 	int hh;
-//	std::vector <string> cont;
+	int height;//height of image
 	int i;
 
-	std::vector <int> x;
-	std::vector <int> y;
+	std::vector <int> x;//X-coordinates
+	std::vector <int> y;//Y-coordinates
 
-	int pointsx;
-	int pointsy;
+	int pointsx;//
+	int pointsy;//
+
+	void read_file();//function calculating coordinates from position in the image
 
 
+public: 
+	void load_file(char*);// reads a svg-file
 
-public: // all the Methods
-	void load_file(char*);//array (x,y)
-	void read_file();
-	void set_cal(int, int, int, int);//ww,hh,cx,cy
-	void test();
-	void write_values(char*);
-	//bool status();
+	void set_cal(int, int, int, int);//calibration
+	void write_values(char*);//prints Points
 
 };
 

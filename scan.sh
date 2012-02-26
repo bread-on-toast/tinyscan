@@ -1,6 +1,6 @@
 #!bash
 rm test.obj
-rm caldata
+#rm caldata
 touch test.obj
 #erzeuge erst svg's
 #for f in img/*.png; do
@@ -12,7 +12,7 @@ touch test.obj
 i=0;
 
 #calc pointcloud
-for f in svg/*.svg; do
+for f in ../v1/svg/*.svg; do
 #cp $f ./laser.svg;
 ./a.out $f $i  >>test.obj;
 i=`expr $i + 10`;
