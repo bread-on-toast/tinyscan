@@ -8,16 +8,17 @@
 using namespace std;
 using std::vector;
 
-int main ( int bla, char *h[] ) {
+int main ( int a, char *h[] ) {
 //cout <<h[1];
 scan myscan;
 
-myscan.set_cal(10000,1000,330,400);//int kx, int ky, int www, int hhh
-myscan.load_file(h[1]);
-//myscan.read_file();
-//myscan.test();
-myscan.write_values(h[2]);
-  return 0;
+myscan.set_geo(1000,10,50);// distance zero-camera, angle laser to camera, stepps/360°
+
+myscan.load_file(h[1], atoi(h[2]));
+myscan.write_values();
+
+//myscan.test(); 
+ return 0;
 }
 
 

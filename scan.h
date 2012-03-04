@@ -5,27 +5,27 @@ class scan
 private: 
 	std::string points;
 	int lines;
-	int cx; //calibration-factors
-	int cy;
-	int ww; //coordinates for zero
-	int hh;
-	int height;//height of image
-	int i;
-
-	std::vector <int> x;//X-coordinates
-	std::vector <int> y;//Y-coordinates
-
-	int pointsx;//
-	int pointsy;//
-
-	void read_file();//function calculating coordinates from position in the image
+	float ww; //coordinates for zero in image
+	float hh;
+	float deg; // winkel/stepp
+	int pv;	// virtuelle Pixel
+	float c; //tan(winkel kamera laser)
+	int a; //abstand kamera nullpunkt
 
 
+	std::vector <float> x;//X-coordinates
+	std::vector <float> y;//Y-coordinates
+	std::vector <float> z;//Y-coordinates
+	void set_zero();//calibration
+	void set_pv();//calibration
 public: 
-	void load_file(char*);// reads a svg-file
+	void load_file(char*,int);// reads a image-file
 
-	void set_cal(int, int, int, int);//calibration
-	void write_values(char*);//prints Points
+
+
+	void write_values();//prints Points
+	void set_geo(int, int, int);//distance zero camera,angle between laser and x-axis, steps/360°
+
 
 };
 

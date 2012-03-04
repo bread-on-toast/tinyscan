@@ -6,109 +6,160 @@
 #include <vector>
 #include<limits>
 #include <cmath> 
+#include "CImg.h"
 using namespace std;
+using namespace cimg_library;
 using std::vector;
 #include "scan.h"
 
 std::vector <string>  cont;
-int lines=0;
-int cx=0;
-int cy=0;
-int ww=0;
-int hh=0;
+
+
+
+float ww=680.000000;
+float hh=270.000000;
+float pv=200.000;
+
 bool end=false;
-int i=0;
+//int i=0;
+int a=0;
 
-std::vector <int> x;
-std::vector <int> y;
+float c=0; //tan(angle laser camera)
 
-int pointsx;
-int pointsy;
-int height;
+std::vector <float> y;
+std::vector <float> z;
+std::vector <float> x;
+float deg;
 
 
-void scan::load_file(char* name){ //füllt cont
-	std::string width;
-	std::string height;
-	ifstream file(name);
-	lines=0;
-	while(file.good() ){
 
-			//pos++;
-		   	std::string line;
-		   	std::getline(file, line);
-	   		if(line.find("rgb(255,0,0)")<1000){
-				if(line.find("cx")<1000){
-					line.replace(0,line.find("cx=\"")+4,"");
-					line.replace(line.find("\" cy=\""),6,",");
-					line=line.substr(0,line.find("\""));
-				  	cont.push_back(line);
-					lines++;
-					}
+
+void scan::load_file(char* name, int num){
+
+	CImg<unsigned char> img(name);
+	int width = img.width();
+	int height = img.height();
+
+	for (float yy = 0.00; yy < height; yy++){
+		for (float xx = 0.00; xx < width; xx++){
+			if((int)img(xx,yy,0,0)>240){
+				float r=sqrt(c*c+1)*a*(ww-xx)/(c*(ww-xx)+pv);
+				/*
+				kalibrierung muss bestimmen: 
+				virtuelle pixel pv
+				*/
+				x.push_back(r*cos(deg*num*M_PI/180)); 
+				y.push_back(r*sin(deg*num*M_PI/180));
+				z.push_back((hh-yy)/pv*sqrt((a-x[x.size()-1])*(a-x[x.size()-1])+y[y.size()-1]*y[y.size()-1])); 
+				//z.push_back(1);
 				}
-			if(line.find("height")<10000){
-				int start=line.find("height=\"")+8;
-				int end= line.find("\">")-start;
-				//cout<<height<<endl;
-				height = atoi(line.substr(start,end).c_str());
-   				}
 			}
-	file.close();
-	read_file();
+		}
+
 }
 
 
-void scan::read_file(){
 
-	i=0;
-	while(i<lines){
 
-		pointsx=atoi(cont[i].substr(0,cont[i].find(",")).c_str())-ww;
-		//pointsy=atoi(cont[i].substr(cont[i].find(",")+1, cont[i].length()-cont[i].find(",") ).c_str())-hh;
-		pointsy=atoi(cont[i].substr(cont[i].find(",")+1, cont[i].length()-cont[i].find(",") ).c_str());
-		y.push_back(cy*(height-hh)/(height-pointsy));
 
-		x.push_back(pointsx*exp(y[i]/cx)); 
+void scan::set_zero(){
 
-		i++;
+	std::vector <int> xc;
+	std::vector <int> yc;
+	CImg<unsigned char> img("./vimg/cal0.png");
+	int width = img.width();
+	int height = img.height();
+	for (int yy = 0; yy < height; yy++){
+		for (int xx = 0; xx < width; xx++){
+			if((int)img(xx,yy,0,0)>250){
+				xc.push_back(xx); 
+				yc.push_back(yy);
+				}
+			}
+		
 		}
-/*
-y ist noch nicht richtig:
+			int www=0;
+			int hhh=0;
 
---------------------|------------------------
-......              |
-      ..........    |pixc
-		....|_...
-		    |	........
-		    |c		........
-		    |_______y____________.|......
+			int min=width;
+			int max=0;		
+			while (xc.size()>0){
+				www=xc[0];
+				if(www<min){min=www;}
+				if(www>max){max=www;}
+				xc.erase(xc.begin());
+				}
+	ww=(min+max)/2;
+			min=height;
+			max=0;		
+			while (yc.size()>0){
+				www=yc[0];
+				if(www<min){min=www;}
+				if(www>max){max=www;}
+				yc.erase(yc.begin());
+				}
+	hh=(min+max)/2;
+	}
 
-y ist proportional zu c/pixc wie derzeit implementiert
+void scan::set_pv(){
+	std::vector <int> xc;
+	std::vector <int> yc;
+	CImg<unsigned char> img("./vimg/calx.png");
+	int width = img.width();
+	int height = img.height();
+	for (int yy = 0; yy < height; yy++){
+		for (int xx = 0; xx < width; xx++){
+			if((int)img(xx,yy,0,0)>200){
+				xc.push_back(xx); 
+				yc.push_back(yy);
+				}
+			}
+		
+		}
+			int www=0;
+			int hhh=0;
 
-*/
+			int min=width;
+			int max=0;		
+			while (xc.size()>0){
+				www=xc[0];
+				if(www<min){min=www;}
+				if(www>max){max=www;}
+				xc.erase(xc.begin());	
+				}
+	www=(min+max)/2;
+
+
+	pv=sqrt(c*c+1)*a*(www-ww)-c*(www-ww);
+
+
+	//pv=200.000;
+
+
 	}
 
 
-
-
-
-void scan::set_cal(int kx, int ky, int www, int hhh){
-	cx=kx;
-	cy=ky;
-	ww=www;
-	hh=hhh;
-	}
-
-void scan::write_values(char* z){
-	cout<<"# "<<lines<<" Punkte gefunden!\n";
+void scan::write_values(){
+	//cout<<"# "<<lines<<" Punkte gefunden!\n";
 	cout<<"# scan begin:"<<endl;
-	i=0;
-	while(i<lines){
-			cout<<"v "<<x[i]<<".0 "<<y[i]<<".0 "<< z <<".0 1.0\n";
-		i++;
+	int i=0;
+	while(x.size()>0){
+	
+			cout<<"v "<<x[0]<<" "<<y[0]<<" "<< z[0] <<" 1.0\n";
+			x.erase(x.begin());
+			y.erase(y.begin());
+			z.erase(z.begin());
 		}
-	cout << "#end plane nr "<<z<<endl;
+
 	}
 
+
+void scan::set_geo(int aa, int b,int stepps){//a = distance zero camera, b = angle between laser and x-axis
+	a=aa;
+	c=tan((90-b)*M_PI/180);
+	deg=360.000/stepps;
+	set_zero(); 
+	set_pv(); 
+	}
 
 
