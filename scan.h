@@ -9,6 +9,7 @@ private:
 	float hh;
 	float deg; // winkel/stepp
 	int pv;	// virtuelle Pixel
+	int pvz;	// virtuelle Pixel
 	float c; //tan(winkel kamera laser)
 	int a; //abstand kamera nullpunkt
 
@@ -18,6 +19,7 @@ private:
 	std::vector <float> z;//Y-coordinates
 	void set_zero();//calibration
 	void set_pv();//calibration
+	void set_pvz();//calibration
 public: 
 	void load_file(char*,int);// reads a image-file
 

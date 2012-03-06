@@ -19,12 +19,14 @@ std::vector <string>  cont;
 float ww=680.000000;
 float hh=270.000000;
 float pv=200.000;
+float pvz=200.000;
+
 
 bool end=false;
 //int i=0;
 int a=0;
 
-float c=0; //tan(angle laser camera)
+float c=0.000; //tan(angle laser camera)
 
 std::vector <float> y;
 std::vector <float> z;
@@ -42,16 +44,22 @@ void scan::load_file(char* name, int num){
 
 	for (float yy = 0.00; yy < height; yy++){
 		for (float xx = 0.00; xx < width; xx++){
-			if((int)img(xx,yy,0,0)>240){
-				float r=sqrt(c*c+1)*a*(ww-xx)/(c*(ww-xx)+pv);
-				/*
-				kalibrierung muss bestimmen: 
-				virtuelle pixel pv
-				*/
+			if((int)img(xx,yy,0,0)>250){
+				
+				
+
+				//float r=sqrt(c*c+1)*a*(ww-xx)/(c*(ww-xx)+pv);
+				float r=sqrt((a/(pv/(ww-xx)-c))*(a/(pv/(ww-xx)-c))*(1+c*c) );
+
+
+//rmax=cos(alfa)*a
+//r=(cos(atan(c))-px/pv*sin(atan(c)))*a
+
 				x.push_back(r*cos(deg*num*M_PI/180)); 
 				y.push_back(r*sin(deg*num*M_PI/180));
-				z.push_back((hh-yy)/pv*sqrt((a-x[x.size()-1])*(a-x[x.size()-1])+y[y.size()-1]*y[y.size()-1])); 
-				//z.push_back(1);
+				//z.push_back((hh-yy)/pv* sqrt((a-x[x.size()-1])* (a*a-x[x.size()-1])*x[x.size()-1]) +y[y.size()-1]*y[y.size()-1])); 
+				z.push_back(((a/(pv/(ww-xx)-c))*c+a)*(hh-yy)/pvz);
+				break;
 				}
 			}
 		}
@@ -66,7 +74,7 @@ void scan::set_zero(){
 
 	std::vector <int> xc;
 	std::vector <int> yc;
-	CImg<unsigned char> img("./vimg/cal0.png");
+	CImg<unsigned char> img("./vimg/cal/cal0.png");
 	int width = img.width();
 	int height = img.height();
 	for (int yy = 0; yy < height; yy++){
@@ -101,10 +109,12 @@ void scan::set_zero(){
 	hh=(min+max)/2;
 	}
 
+
+
 void scan::set_pv(){
 	std::vector <int> xc;
 	std::vector <int> yc;
-	CImg<unsigned char> img("./vimg/calx.png");
+	CImg<unsigned char> img("./vimg/cal/calx.png");
 	int width = img.width();
 	int height = img.height();
 	for (int yy = 0; yy < height; yy++){
@@ -130,18 +140,51 @@ void scan::set_pv(){
 	www=(min+max)/2;
 
 
-	pv=sqrt(c*c+1)*a*(www-ww)-c*(www-ww);
+	pv=(www-ww)*(a+1)*c;
+	//pv=1000.000;
+	}
 
 
-	//pv=200.000;
+
+void scan::set_pvz(){
+	std::vector <int> xcc;
+	std::vector <int> ycc;
+	CImg<unsigned char> img("./vimg/cal/calz.png");
+	int width = img.width();
+	int height = img.height();
+	for (int yy = 0; yy < height; yy++){
+		for (int xx = 0; xx < width; xx++){
+			if((int)img(xx,yy,0,0)>200){
+				xcc.push_back(xx); 
+				ycc.push_back(yy);
+				}
+			}
+		
+		}
+			int www=0;
+			int hhh=0;
+
+			int min=height;
+			int max=0;		
+			while (ycc.size()>0){
+				www=ycc[0];
+				if(www<min){min=www;}
+				if(www>max){max=www;}
+				ycc.erase(ycc.begin());	
+				}
+	www=(min+max)/2;
+
+
+	pvz=a*(www-ww);
+
+	//pv=1000.000;
 
 
 	}
 
 
+
 void scan::write_values(){
-	//cout<<"# "<<lines<<" Punkte gefunden!\n";
-	cout<<"# scan begin:"<<endl;
 	int i=0;
 	while(x.size()>0){
 	
@@ -154,12 +197,13 @@ void scan::write_values(){
 	}
 
 
-void scan::set_geo(int aa, int b,int stepps){//a = distance zero camera, b = angle between laser and x-axis
+void scan::set_geo(int aa, int b,int stepps){//aa = distance zero camera, b = angle between laser and x-axis
 	a=aa;
-	c=tan((90-b)*M_PI/180);
-	deg=360.000/stepps;
+	c=tan((b)*M_PI/180);
+	deg=360.0000/stepps;
 	set_zero(); 
 	set_pv(); 
+	set_pvz(); 
 	}
 
 

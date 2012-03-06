@@ -9,4 +9,4 @@ i=`expr $i + 1`;
 echo $i;
 done;
 
-#meshlab test.obj
+meshlab test.obj

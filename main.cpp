@@ -12,7 +12,7 @@ int main ( int a, char *h[] ) {
 //cout <<h[1];
 scan myscan;
 
-myscan.set_geo(1000,10,50);// distance zero-camera, angle laser to camera, stepps/360°
+myscan.set_geo(8,78,49);// distance zero-camera, winkel laser zu bildebene , stepps/360°
 
 myscan.load_file(h[1], atoi(h[2]));
 myscan.write_values();
