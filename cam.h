@@ -4,15 +4,10 @@ class cam
 {
 private: 
 	std::vector <int> res;
-	std::vector <int> x;
-	std::vector <int> y;
-	void get_px(); //berechnet (x,y)
 public: 
-	void grep_img(int,int,int); //macht bild und wertet aus (channel(rgb),device(/dev/videox), min colorvalue)
-	std::vector <int> get_x();
-	std::vector <int> get_y();
-
-
+	void cam::grep_img(int,int); //gibt Vurweqktor mit pixelwerten zurück, wobei [0]=w,[1]=hight
+	int cam::get_w(); //pixelwert für x,y,	
+	int cam::get_h(); //pixelwert für x,y,
 };
 
 #endif

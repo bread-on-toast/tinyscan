@@ -1,2 +1,2 @@
-tinyscan:	main.cpp scan.cpp cam.cpp
-	g++ main.cpp scan.cpp cam.cpp -lcv -lhighgui -o tinyscan  
+tinyscan:	main.cpp scan.cpp
+	g++ main.cpp scan.cpp -lX11 -lpthread -lcv -lhighgui -o tinyscan -lcurses

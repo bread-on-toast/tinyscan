@@ -17,14 +17,17 @@ private:
 	std::vector <float> x;//X-coordinates
 	std::vector <float> y;//Y-coordinates
 	std::vector <float> z;//Y-coordinates
+	void set_zero(int);//calibration
+	void set_pv(int);//calibration
+	void set_pvz(int);//calibration
 
 public: 
-	void load_img(int);// reads a image-file
+	void send(const char*);
+	void get_img(int);
+	void load_file(char*,int);// reads a image-file
 	void write_values();//prints Points
-	void set_geo(int, int, int);//distance zero camera,angle between laser and x-axis, steps/360°
-	void set_zero();//calibration
-	void set_pv();//calibration
-	void set_pvz();//calibration
+	void set_geo(int, int, int, int);//distance zero camera,angle between laser and x-axis, steps/360°
+
 
 };
 
