@@ -1,3 +1,22 @@
+/*
+    Tinyscan - a small 3D-Scanner
+    Copyright (C) 2012  Andre Sobotta
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -188,7 +207,13 @@ void scan::set_pvz(int dev){
 
 void scan::write_values(){
 	int i=0;
-	ofstream myfile;
+ofstream myfile;
+  	myfile.open ("cloud.obj", ios::in);
+  			
+	
+	
+			myfile<<"# Created by tinyscan \n\n";
+	myfile.close();
   	myfile.open ("cloud.obj", ios::app);
   			
 	while(x.size()>0){
@@ -220,7 +245,7 @@ void scan::set_geo(int aa, int b,int stepps, int dev){//aa = distance zero camer
 
 void scan::send(const char* mes){
 		ofstream myfile;
-  		myfile.open ("/dev/ttyUSB1", ios::app);
+  		myfile.open ("/dev/ttyUSB0", ios::app);
   		myfile << mes;
   		myfile.close();
 	}
