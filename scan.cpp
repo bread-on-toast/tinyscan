@@ -18,11 +18,13 @@
 
 
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unistd.h>
 #include<limits>
 #include <cmath> 
 #include "CImg.h"
@@ -39,14 +41,13 @@ std::vector <string>  cont;
 
 
 
-float ww=680.000000;
-float hh=270.000000;
-float pv=200.000;
-float pvz=200.000;
+float ww=0.000000;
+float hh=0.000000;
+float pv=0.000;
+float pvz=0.000;
 
 
 bool end=false;
-//int i=0;
 int a=0;
 
 float c=0.000; //tan(angle laser camera)
@@ -225,10 +226,13 @@ ofstream myfile;
 		}
 
 	myfile.close();
+	x.clear();
+	y.clear();
+	z.clear();
 	}
 
 
-void scan::set_geo(int aa, int b,int stepps, int dev){//aa = distance zero camera, b = angle between laser and x-axis
+void scan::set_geo(int aa, int b,int stepps, int dev){//aa = distance zero camera, b = angle between laser and cam
 	a=aa;
 	c=tan((b)*M_PI/180);
 	deg=360.0000/stepps;
@@ -241,6 +245,7 @@ void scan::set_geo(int aa, int b,int stepps, int dev){//aa = distance zero camer
 	send("Y1");
 	set_pvz(dev); 
 	send("Y0");
+	cout <<"pv="<<pv<<" pvz="<<pvz<<" ww="<<ww<<"hh="<<hh<<endl;
 	}
 
 void scan::send(const char* mes){
@@ -248,6 +253,7 @@ void scan::send(const char* mes){
   		myfile.open ("/dev/ttyUSB0", ios::app);
   		myfile << mes;
   		myfile.close();
+		sleep(0.1);
 	}
 
 
