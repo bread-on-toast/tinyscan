@@ -1,0 +1,19 @@
+Tinyscan (by Andre Sobotta)
+
+ 
+
+The goal of this Project is a small Desktop 3D-Scanner, 
+using a linelaser, Ardurino-board, a stepper-motor and a Webcam.
+
+ 
+
+ 
+
+Things Tinyscan can do:
+- take pictures
+- generate a 3D-Pointcloud
+- calibrate itself
+ 
+
+ Things Tinyscan will do(in the future):
+- remeshing the Pointcloud
