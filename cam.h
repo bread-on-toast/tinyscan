@@ -16,16 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #ifndef CAM_H
 #define CAM_H
 class cam
 {
 private: 
-	std::vector <int> res;
+	IplImage* get_img(int );
+	IplImage* get_cont(IplImage*, int);
+	std::vector <int> px;
+	std::vector <int> py;
+	int width;
+	int height;
+	int dev;
+
+
 public: 
-	void cam::grep_img(int,int); //gibt Vurweqktor mit pixelwerten zurück, wobei [0]=w,[1]=hight
-	int cam::get_w(); //pixelwert für x,y,	
-	int cam::get_h(); //pixelwert für x,y,
+	void grep_img(int); //gibt Vurweqktor mit pixelwerten zurück, wobei [0]=w,[1]=hight
+	int get_w(); //pixelwert für x,y,	
+	int get_h(); //pixelwert für x,y,
+	void set_dev(int);
+	std::vector <int> get_x();
+	std::vector <int> get_y();
+	void flush();
 };
 
 #endif

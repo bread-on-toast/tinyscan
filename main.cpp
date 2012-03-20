@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <vector>
 #include "scan.h"
+#include "cam.h"
 #include <curses.h>
 
 using namespace std;
@@ -31,6 +32,7 @@ using std::vector;
 
 int main ( int a, char *h[] ) {
 scan myscan;
+
 int steps=360;
 string q="y";
 myscan.send("X0");
@@ -38,9 +40,10 @@ myscan.send("Y0");
 myscan.send("Z0");
 myscan.send("L0");
 
-cout<<"start calibration\n"<<endl;
 
-myscan.set_geo(3,60,steps,1);// distance zero-camera, winkel laser zu kamera , stepps/360°, cam-dev
+cout<<"start calibration\n";
+
+myscan.set_geo(2,70,steps,1 );// distance zero-camera, winkel laser zu kamera , stepps/360°, cam-dev
 
 cout<<"Insert Object to scan and hit return\n"<<endl;
 string bla;
@@ -50,7 +53,6 @@ while(q=="y"){
 myscan.send("L1");
 sleep(0.1);
 for(int i=0 ; i<steps;i++){
-	myscan.get_img(1);
 	myscan.load_file("/tmp/tinyscan.png", i);
 	cout <<i+1<<"\n\n\n\n--------------------------\n\n";
 	myscan.send("S");

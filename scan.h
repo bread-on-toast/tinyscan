@@ -30,7 +30,7 @@ private:
 	int pvz;// virtuelle Pixel z-Achse
 	float c; //tan(winkel kamera laser)
 	int a; //abstand kamera nullpunkt
-
+	int dev;
 
 	std::vector <float> x;//X-coordinates
 	std::vector <float> y;//Y-coordinates
@@ -45,6 +45,7 @@ public:
 	void load_file(char*,int);// reads a image-file
 	void write_values();//prints Points
 	void set_geo(int, int, int, int);//distance zero camera,angle between laser and x-axis, steps/360°
+	//void set_dev(int);
 
 
 };

@@ -28,6 +28,8 @@
 #include<limits>
 #include <cmath> 
 #include "CImg.h"
+#include "cam.h"
+#include "scan.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
@@ -35,12 +37,12 @@
 using namespace std;
 using namespace cimg_library;
 using std::vector;
-#include "scan.h"
+
 
 std::vector <string>  cont;
 
 
-
+//int dev=1;
 float ww=0.000000;
 float hh=0.000000;
 float pv=0.000;
@@ -52,170 +54,128 @@ int a=0;
 
 float c=0.000; //tan(angle laser camera)
 
-std::vector <float> y;
-std::vector <float> z;
-std::vector <float> x;
+std::vector <float> x,y,z;
+//std::vector <float> z;
+//std::vector <float> x;
 float deg;
 
 
-void scan::get_img(int dev)//dev=device number
-    	{
-	CvCapture *capture = 0; 
-    	IplImage  *frame = 0;
-    	/* initialize camera */
-    	capture = cvCaptureFromCAM(dev);
-    	if ( !capture ) {
-    		fprintf( stderr, "Cannot open initialize webcam!\n" );
-        	}     
-	frame = cvQueryFrame( capture );
-	cvSaveImage("/tmp/tinyscan.png" ,frame);
-	cvReleaseCapture( &capture );
-	}
-
 void scan::load_file(char* name, int num){
+	cam mycam;
+	mycam.set_dev(1);
+	mycam.grep_img(1);
+	
+	std::vector <int> xx=mycam.get_x();
+	std::vector <int> yy=mycam.get_y();
 
-	CImg<unsigned char> img(name);
-	int width = img.width();
-	int height = img.height();
 
-	for (float yy = 0.00; yy < height; yy++){
-		for (float xx = 0.00; xx < width; xx++){
-			if((int)img(xx,yy,0,0)>250){
-				float r=sqrt((a/(pv/(ww-xx)-c))*(a/(pv/(ww-xx)-c))*(1+c*c) );
-				x.push_back(r*cos(deg*num*M_PI/180)); 
-				y.push_back(r*sin(deg*num*M_PI/180));
-				z.push_back(((a/(pv/(ww-xx)-c))*c+a)*(hh-yy)/pvz);
-				break;
-				}
-			}
+	while(yy.size()>0){
+		float r=sqrt((a/(pv/(ww-xx[0])-c))*(a/(pv/(ww-xx[0])-c))*(1+c*c) );
+		x.push_back(r*cos(deg*num*M_PI/180)); 
+		y.push_back(r*sin(deg*num*M_PI/180));
+		z.push_back(((a/(pv/(ww-xx[0])-c))*c+a)*(hh-yy[0])/pvz);
+		xx.erase(xx.begin());
+		yy.erase(yy.begin());
 		}
-
 }
 
 
 
 
 
-void scan::set_zero(int dev){
+void scan::set_zero(int d){
+	cam mycam;
+	mycam.set_dev(d);
+	mycam.grep_img(1);
+	
+	std::vector <int> xc=mycam.get_x();
+	std::vector <int> yc=mycam.get_y();
 
-	std::vector <int> xc;
-	std::vector <int> yc;
-	get_img(dev);
-	CImg<unsigned char> img("/tmp/tinyscan.png");
-	int width = img.width();
-	int height = img.height();
-	for (int yy = 0; yy < height; yy++){
-		for (int xx = 0; xx < width; xx++){
-			if((int)img(xx,yy,0,0)>250){
-				xc.push_back(xx); 
-				yc.push_back(yy);
-				}
-			}
-		
+	int width = mycam.get_w();
+	int height = mycam.get_h();
+
+	int www=0;
+	int hhh=0;
+	int min=width;
+	int max=0;		
+	while (xc.size()>0){
+		www=xc[0];
+		if(www<min){min=www;}
+		if(www>max){max=www;}
+		xc.erase(xc.begin());
 		}
-			int www=0;
-			int hhh=0;
-
-			int min=width;
-			int max=0;		
-			while (xc.size()>0){
-				www=xc[0];
-				if(www<min){min=www;}
-				if(www>max){max=www;}
-				xc.erase(xc.begin());
-				}
 	ww=(min+max)/2;
-			min=height;
-			max=0;		
-			while (yc.size()>0){
-				www=yc[0];
-				if(www<min){min=www;}
-				if(www>max){max=www;}
-				yc.erase(yc.begin());
-				}
+	min=height;
+	max=0;		
+	while (yc.size()>0){
+		www=yc[0];
+		if(www<min){min=www;}
+		if(www>max){max=www;}
+		yc.erase(yc.begin());
+		}
 	hh=(min+max)/2;
+	mycam.flush();
 	}
 
 
 
-void scan::set_pv(int dev){
-	std::vector <int> xc;
-	std::vector <int> yc;
-	get_img(dev);
-	CImg<unsigned char> img("/tmp/tinyscan.png");
-	int width = img.width();
-	int height = img.height();
-	for (int yy = 0; yy < height; yy++){
-		for (int xx = 0; xx < width; xx++){
-			if((int)img(xx,yy,0,0)>200){
-				xc.push_back(xx); 
-				yc.push_back(yy);
-				}
-			}
-		
-		}
-			int www=0;
-			int hhh=0;
+void scan::set_pv(int d){
+	cam mycam;
+	mycam.set_dev(d);
+	mycam.grep_img(1);
+	
+	std::vector <int> xc=mycam.get_x();
+	std::vector <int> yc=mycam.get_y();
+	int www=0;
+	int hhh=0;
 
-			int min=width;
-			int max=0;		
-			while (xc.size()>0){
-				www=xc[0];
-				if(www<min){min=www;}
-				if(www>max){max=www;}
-				xc.erase(xc.begin());	
-				}
+	int min=mycam.get_w();
+	int max=0;		
+	while (xc.size()>0){
+		www=xc[0];
+		if(www<min){min=www;}
+		if(www>max){max=www;}
+		xc.erase(xc.begin());	
+		}
 	www=(min+max)/2;
-
-
 	pv=(www-ww)*(a+1)*c;
+	mycam.flush();
 	}
 
 
 
-void scan::set_pvz(int dev){
-	std::vector <int> xcc;
-	std::vector <int> ycc;
-	get_img(dev);
-	CImg<unsigned char> img("/tmp/tinyscan.png");
-	int width = img.width();
-	int height = img.height();
-	for (int yy = 0; yy < height; yy++){
-		for (int xx = 0; xx < width; xx++){
-			if((int)img(xx,yy,0,0)>200){
-				xcc.push_back(xx); 
-				ycc.push_back(yy);
-				}
-			}
-		
-		}
-			int www=0;
-			int hhh=0;
+void scan::set_pvz(int d){
+	cam mycam;
+	mycam.set_dev(d);
+	mycam.grep_img(1);
+	
+	std::vector <int> xcc=mycam.get_x();
+	std::vector <int> ycc=mycam.get_y();
+	int www=0;
+	int hhh=0;
 
-			int min=height;
-			int max=0;		
-			while (ycc.size()>0){
-				www=ycc[0];
-				if(www<min){min=www;}
-				if(www>max){max=www;}
-				ycc.erase(ycc.begin());	
-				}
+	int min=mycam.get_h();
+	int max=0;		
+	while (ycc.size()>0){
+		www=ycc[0];
+		if(www<min){min=www;}
+		if(www>max){max=www;}
+		ycc.erase(ycc.begin());	
+		}
 	www=(min+max)/2;
 	pvz=a*(www-ww);
+	mycam.flush();
 	}
 
 
 
 void scan::write_values(){
 	int i=0;
-ofstream myfile;
-  	myfile.open ("cloud.obj", ios::in);
-  			
-	
-	
-			myfile<<"# Created by tinyscan \n\n";
-	myfile.close();
+	remove("cloud.obj");
+	ofstream myfile;
   	myfile.open ("cloud.obj", ios::app);
+  			
+	myfile<<"# Created by tinyscan \n\n";
   			
 	while(x.size()>0){
 	
@@ -232,18 +192,21 @@ ofstream myfile;
 	}
 
 
-void scan::set_geo(int aa, int b,int stepps, int dev){//aa = distance zero camera, b = angle between laser and cam
+void scan::set_geo(int aa, int b,int stepps, int d){//aa = distance zero camera, b = angle between laser and cam
+	//dev=d;
+
 	a=aa;
 	c=tan((b)*M_PI/180);
 	deg=360.0000/stepps;
 	send("Z1");
-	set_zero(dev); 
+	set_zero(d); 
 	send("Z0");
 	send("X1");
-	set_pv(dev);
+	set_pv(d);
 	send("X0"); 
 	send("Y1");
-	set_pvz(dev); 
+	set_pvz(d); 
+
 	send("Y0");
 	cout <<"pv="<<pv<<" pvz="<<pvz<<" ww="<<ww<<"hh="<<hh<<endl;
 	}
@@ -253,7 +216,11 @@ void scan::send(const char* mes){
   		myfile.open ("/dev/ttyUSB0", ios::app);
   		myfile << mes;
   		myfile.close();
-		sleep(0.1);
+		sleep(0.5);
 	}
+
+//void scan::set_dev(int d){in set_geo...
+//		dev=d;
+//	}
 
 
